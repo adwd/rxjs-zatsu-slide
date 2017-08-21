@@ -81,7 +81,7 @@ Rx.Observable.fromEvent(document.getElementById('sample1'), 'click').subscribe(e
             $this.wrap('<div/>').removeClass('copytoclipboard');
             $wrapper = $this.parent();
             $wrapper.addClass('copytoclipboard-wrapper').css({position: 'relative'})
-            $button.css({position: 'absolute', top: 10, right: 10}).appendTo($wrapper).addClass('copytoclipboard btn btn-default');
+            $button.css({position: 'absolute', top: 32, right: 50, height: 30, width: 60}).appendTo($wrapper).addClass('copytoclipboard btn btn-default');
             /* */
             var copyCode = new Clipboard('button.copytoclipboard', {
                 target: function (trigger) {
