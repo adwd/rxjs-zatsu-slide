@@ -12,6 +12,10 @@
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
 
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"	integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="	crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.3/Rx.min.js"></script>
+
 		<!-- Printing and PDF exports -->
 		<script>
 			var link = document.createElement( 'link' );
@@ -24,8 +28,32 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+					Slide 1
+					<pre class="copytoclipboard">
+							<code class="language-javascript">
+console.log('hello');
+							</code>
+					</pre>
+				</section>
+				<section>
+					Slide 2
+					<pre class="copytoclipboard">
+							<code class="language-javascript">
+Rx.Observable.from([1,2,3,4])
+  .subscribe(n => console.log(n));
+							</code>
+					</pre>
+				</section>
+				<section>
+					Slide 3
+					<button id="sample1">id: sample1</button>
+					<pre class="copytoclipboard">
+							<code class="language-javascript">
+Rx.Observable.fromEvent(document.getElementById('sample1'), 'click').subscribe(ev => console.log(ev));
+							</code>
+					</pre>
+				</section>
 			</div>
 		</div>
 
@@ -44,6 +72,41 @@
 					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
 				]
 			});
+		</script>
+		<script>
+        /* Prism copy to clipbaord for all pre with copytoclipboard class */
+        $('pre.copytoclipboard').each(function () {
+            $this = $(this);
+            $button = $('<button>Copy</button>');
+            $this.wrap('<div/>').removeClass('copytoclipboard');
+            $wrapper = $this.parent();
+            $wrapper.addClass('copytoclipboard-wrapper').css({position: 'relative'})
+            $button.css({position: 'absolute', top: 10, right: 10}).appendTo($wrapper).addClass('copytoclipboard btn btn-default');
+            /* */
+            var copyCode = new Clipboard('button.copytoclipboard', {
+                target: function (trigger) {
+									return trigger.previousElementSibling;
+                },
+								text: function (trigger) {
+									const str = trigger.previousElementSibling.textContent;
+									const formatted = str.split('\n').filter(s => s.trim() !== '').join('\n');
+									return formatted;
+								}
+            });
+            copyCode.on('success', function (event) {
+                event.clearSelection();
+                event.trigger.textContent = 'Copied';
+                window.setTimeout(function () {
+                    event.trigger.textContent = 'Copy';
+                }, 2000);
+            });
+            copyCode.on('error', function (event) {
+                event.trigger.textContent = 'Press "Ctrl + C" to copy';
+                window.setTimeout(function () {
+                    event.trigger.textContent = 'Copy';
+                }, 2000);
+            });
+        });
 		</script>
 	</body>
 </html>
