@@ -216,6 +216,31 @@ var observer = {
           </pre>
         </section>
         <section>
+          <h2>Observable.create</h2>
+          <ul>
+            <li>一番プリミティブなObservable生成メソッド</li>
+            <li>引数にObserverを取り、next/error/completeを操作</li>
+          </ul>
+          <p style="font-size: 60%">XMLHttpRequestと組み合わせてオレオレRxJSHttpクライアントが作れそう？</p>
+          <pre class="copytoclipboard">
+            <code class="language-javascript">              
+var observable = Rx.Observable.create((observer) => {
+  observer.next(1);
+  observer.next(2);
+  setTimeout(() => {
+    observer.next(3);
+    observer.complete();
+  }, 1000);
+});
+observable.subscribe(
+  (x) => console.log('value: ' + x),
+  (e) => console.log(e),
+  () => console.log('completed')
+);
+            </code>
+          </pre>
+        </section>
+        <section>
           <h2>Observableの性質</h2>
           <ul>
             <li>Observableは一つのObserverしか受け付けない</li>
