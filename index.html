@@ -24,35 +24,113 @@
       link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
       document.getElementsByTagName( 'head' )[0].appendChild( link );
     </script>
+    <style type="text/css">
+      .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+        text-transform: none;
+      }
+      button#the-button, button#the-button2 {
+        width: 200px;
+        height: 50px;
+        font-size: 16px;
+      }
+    </style>
   </head>
   <body>
     <div class="reveal">
       <div class="slides">
+        <section data-background-image="image/rxjs-logo.png" data-background-size="auto 80%">
+          <h1>雑なRxJS入門</h1>
+          
+          <p>2017/8/25 RxJSを活用したAngularアプリの状態管理設計</p>
+        </section>
         <section>
-          Slide 1
+        <h2>雑?</h2>
+        <ul>
+          <li>この勉強会の後半で必要になるRxJSの前提知識だけカバーします</li>
+          <ul>
+            <li>RxJSってなに</li>
+            <li>Observable</li>
+            <li>Subject</li>
+            <li>BehaviorSubject</li>
+          </ul>
+        </ul>
+        </section>
+        <section>
+          <h2>RxJSってなに</h2>
+          非同期やイベントのコールバックをmap/filter/reduceなどのコレクションのAPIぽく扱えるライブラリ
           <pre class="copytoclipboard">
             <code class="language-javascript">
-console.log('hello');
+Rx.Observable.fromEvent(window, 'click')
+  .filter(ev => ev.pageX < 400 && ev.pageY < 400)
+  .map(ev => 'mouse click, X:' + ev.pageX + ', Y:' + ev.pageY)
+  .subscribe(msg => console.log(msg));
+            </code>
+          </pre>
+          <p style="font-size: 70%">このスライドに出てくるコードをCopyボタンでコピーしてコンソールに貼って動かしてみてください</p>
+        </section>
+        <section>
+          <h2>JSのふつうのイベント・非同期ハンドリング</h2>
+          <button id="the-button">THE BUTTON</button>
+          <pre class="copytoclipboard">
+            <code class="language-javascript">              
+var button = document.querySelector('#the-button');
+button.addEventListener('click', () => console.log('Clicked!'));
+
+Promise.resolve('oi')
+  .then(msg => console.log(msg));
             </code>
           </pre>
         </section>
         <section>
-          Slide 2
+          <h2>RxJSだとこう</h2>
+          <button id="the-button2">THE BUTTON2</button>
           <pre class="copytoclipboard">
-            <code class="language-javascript">
-Rx.Observable.from([1,2,3,4])
-.subscribe(n => console.log(n));
+            <code class="language-javascript">              
+var button2 = document.querySelector('#the-button2');
+Rx.Observable.fromEvent(button2, 'click')
+  .subscribe(() => console.log('Clicked!'));
+
+Rx.Observable.fromPromise(Promise.resolve('oi'))
+  .subscribe(msg => console.log(msg));
             </code>
           </pre>
         </section>
         <section>
-          Slide 3
-          <button id="sample1">id: sample1</button>
-          <pre class="copytoclipboard">
-            <code class="language-javascript">
-Rx.Observable.fromEvent(document.getElementById('sample1'), 'click').subscribe(ev => console.log(ev));
-            </code>
-          </pre>
+          <h2>RxJSだとなにがうれしいのか？</h2>
+          <ul>
+            <li>イベント・非同期の扱いが統一される</li>
+            <li>map/filterなど便利オペレータが山盛り</li>
+          </ul>
+
+          <p>うれしくなくてもAngularが使ってるので覚えたざるを得ない</p>
+        </section>
+        <section>
+          <h2>RxJSは難しい？</h2>
+          <ul>
+            <li>たぶんYES</li>
+            <li>オペレータが100個以上あったりする</li>
+            <li>そもそも非同期・イベントハンドリングが難しい？</li>
+          </ul>
+        </section>
+        <section>
+          <h2><a href="http://reactivex.io/rxjs/manual/overview.html#introduction">公式ドキュメント</a>が勉強になる</h2>
+          <ul>
+            <li>英語きつい・・・</li>
+            <li>Google翻訳でがんばって読む</li>
+            <li><a href="http://qiita.com/maaz118/items/d39d1bc695d964f06fec">Qiitaに置いてます</a></li>
+          </ul>
+        </section>
+        <section>
+          <h2>RxJSを分解する</h2>
+          <p>6つのコンセプトに分類できる</p>
+          <ul>
+            <li>Observable</li>
+            <li>Observer</li>
+            <li>Subscription</li>
+            <li>Operators</li>
+            <li>Subject</li>
+            <li>Schedulers</li>
+          </ul>
         </section>
       </div>
     </div>
