@@ -44,6 +44,28 @@
           <p>2017/8/25 RxJSを活用したAngularアプリの状態管理設計</p>
         </section>
         <section>
+        <style>
+          .flex-container {
+            display: flex;
+            flex-direction: row;
+          }
+        </style>
+        <h2>自己紹介</h2>
+        <div class="flex-container">
+          <div style="flex-grow: 2">
+            <ul>
+              <li>西田雅博</li>
+              <li>株式会社ビズリーチ HRMOS事業部 エンジニア</li>
+              <li>最近はフロントエンドメイン、サーバーサイドもやってました</li>
+              <li>Angular4, Play Framework (Scala), React</li>
+            </ul>
+          </div>
+          <div style="flex-grow: 1">
+            <img src="image/adwd.jpg" alt="avatar">
+          </div>
+        </div>
+        </section>
+        <section>
         <h2>雑?</h2>
         <ul>
           <li>この勉強会の後半で必要になるRxJSの前提知識だけカバーします</li>
@@ -182,22 +204,19 @@ Rx.Observable.fromEvent(window, 'mousemove')
             <li>next, error, completeの3種類の値を発生させる</li>
             <li>nextは0〜無限の数だけ発生する</li>
             <li>error, completeのどちらかが発生するとそれ以降値は発生しない</li>
-            <li>今まで書いていたのはnextだけの短縮記法</li>
           </ul>
           <button class="button" id="next" onClick="myObservable.next('yay')">next</button>
           <button class="button" id="error" onClick="myObservable.error(new Error('oi'))">error</button>
           <button class="button" id="complete" onClick="myObservable.complete()">complete</button>
           <pre class="copytoclipboard">
-            <code class="language-javascript">              
-myObservable
+            <code class="language-javascript">myObservable
   .subscribe({
     next: (x) => console.log(x),
     error: (e) => console.error(e),
     complete: () => console.log('completed')
   });
 // nextだけの場合短く書ける
-// myObservable.subscribe((x) => console.log(x))
-            </code>
+// myObservable.subscribe((x) => console.log(x))</code>
           </pre>
         </section>
         <section>
@@ -219,12 +238,11 @@ var observer = {
           <h2>Observable.create</h2>
           <ul>
             <li>一番プリミティブなObservable生成メソッド</li>
-            <li>引数にObserverを取り、next/error/completeを操作</li>
+            <li>引数にObserverを取り、nextなどで操作</li>
           </ul>
           <p style="font-size: 60%">XMLHttpRequestと組み合わせてオレオレRxJSHttpクライアントが作れそう？</p>
           <pre class="copytoclipboard">
-            <code class="language-javascript">              
-var observable = Rx.Observable.create((observer) => {
+            <code class="language-javascript">var observable = Rx.Observable.create((observer) => {
   observer.next(1);
   observer.next(2);
   setTimeout(() => {
@@ -236,8 +254,7 @@ observable.subscribe(
   (x) => console.log('value: ' + x),
   (e) => console.log(e),
   () => console.log('completed')
-);
-            </code>
+);</code>
           </pre>
         </section>
         <section>
@@ -267,8 +284,7 @@ getUser(): Observable&ltUser&gt {
             <li>Subjectのnextなどのメソッドを実行するとSubjectをsubscribeしているObserverに値が配信される</li>
           </ul>
           <pre>
-            <code class="language-typescript">
-// user$をいろんなところからsubscribeする
+            <code class="language-typescript">// user$をいろんなところからsubscribeする
 public user$ = new Rx.Subject();
 getUser() {
   this.http.get&ltUser&gt('/api/user')
@@ -289,15 +305,13 @@ getUser() {
           <button class="button" onClick="behaviorSubject.subscribe(console.log)">subscribe BehaviorSubject</button>
           <button class="button" onClick="subject.subscribe(console.log)">subscribe Subject</button>
           <pre class="copytoclipboard">
-            <code class="language-javascript">
-window.behaviorSubject = new Rx.BehaviorSubject(0);
+            <code class="language-javascript">window.behaviorSubject = new Rx.BehaviorSubject(0);
 window.subject = new Rx.Subject();
 window.count = 0;
 setInterval(() => {
   behaviorSubject.next(++count);
   subject.next(count);
-}, 2000);
-            </code>
+}, 2000);</code>
           </pre>
         </section>
         <section data-background-image="image/rxjs-logo.png" data-background-size="auto 80%">
