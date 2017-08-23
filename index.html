@@ -199,20 +199,6 @@ Rx.Observable.fromEvent(window, 'mousemove')
           </pre>
         </section>
         <section>
-          <h2>Angularでは</h2>
-          <ul>
-            <li>HttpやRouterなどなど</li>
-          </ul>
-          <pre class="copytoclipboard">
-            <code class="language-typescript">
-// Observable&ltUser&gtが戻り値
-http.get&ltUser&gt('/api/user');
-// /users?id=10 クエリパラメータが変わるとデータが渡ってくる
-route.queryParams.subscribe(params.id => this.selectedId = params.id)
-            </code>
-          </pre>
-        </section>
-        <section>
           <script>
             window.myObservable = new Rx.Subject();
           </script>
@@ -296,6 +282,30 @@ export class UserComponent {
             </pre>
         </section>
         <section>
+          <h2>async パイプ版</h2>
+          <ul>
+            <li>asyncパイプを使うとsubscribe/unsubscribeを<br/>よしなにやってくれる</li>
+            <li>ngIfやngForとの併用が便利</li>
+          </ul>
+          <pre>
+              <code class="language-typescript">@Component({
+  template: `
+    &ltdiv *ngIf="user$ | async as user else loading"&gt
+      &ltp&gt{{ user.name }}&lt/p&gt
+    &lt/div&gt
+    &ltng-template #loading&gt
+      &ltspan&gtloading&lt/span&gt
+    &lt/ng-template&gt`
+})
+export class UserComponent {
+  user$: Observable&ltUser&gt;
+  constructor(private http: HttpClient) {
+    this.user$ = http.get&ltUser&gt('/api/user');
+  }
+}</code>
+            </pre>
+        </section>
+        <section>
           <h2>Httpの4xx/5xxレスポンス</h2>
           <pre>
               <code class="language-typescript">// true:ログイン成功 false:失敗
@@ -313,11 +323,32 @@ login(name: string, password: string): Observable&ltboolean&gt {
             </pre>
         </section>
         <section>
+          <h2>Router</h2>
+          <pre>
+            <code class="language-typescript">
+constructor(
+  private route: ActivatedRoute,
+  private service: HeroService
+) {}
+
+ngOnInit() {
+  // /heroes?id=10 のようなクエリパラメータの更新を監視
+  this.route.paramMap
+    .switchMap((params: ParamMap) =>
+      this.service.getHero(params.get('id'))
+    )
+    .subscribe((hero: Hero) => this.hero = hero);
+}
+            </code>
+          </pre>
+        </section>
+        <section>
           <h2>サジェスト表示</h2>
           <pre>
               <code class="language-typescript" style="max-height: 50vh;">@Component({
   template: `
-    &ltinput type="text" (keyup)="onChange(input.value)" #input /&gt
+    &ltinput type="text" #input
+           (keyup)="onChange(input.value)" /&gt
     &ltp&gtさては{{ suggest }}だなオメー&lt/p&gt`
 })
 export class AppComponent {
@@ -356,6 +387,7 @@ getUser(): Observable&ltUser&gt {
 // ユーザーデータをUserProfileComponentでも
 // UserAvatarComponentでも使いたい
 // けど2回API叩くのは良くない
+// getUser()を実行するたびにHTTPリクエストが飛ぶ
             </code>
           </pre>
         </section>
@@ -368,7 +400,7 @@ getUser(): Observable&ltUser&gt {
           </ul>
           <pre>
             <code class="language-typescript">// user$をいろんなところからsubscribeする
-public user$ = new Rx.Subject();
+public user$ = new Subject();
 getUser() {
   this.http.get&ltUser&gt('/api/user')
     .subscribe(user => user$.next(user));
