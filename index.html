@@ -28,10 +28,6 @@
       .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
         text-transform: none;
       }
-      .reveal pre {
-        width: 100%;
-        margin: 0;
-      }
       .button {
         width: 200px;
         height: 50px;
@@ -127,9 +123,10 @@ Rx.Observable.fromPromise(Promise.resolve('oi'))
           <ul>
             <li>イベント・非同期の扱いが統一される</li>
             <li>map/filterなど便利オペレータが山盛り</li>
+            <ul><li>自分で書いたらだるすぎる・バグりまくるような処理もイケる</li></ul>
           </ul>
 
-          <p>うれしくなくてもAngularが使ってるので覚えたざるを得ない</p>
+          <p>うれしくなくてもAngularが<br/>使ってるので覚えたざるを得ない😂 </p>
         </section>
         <section>
           <h2>RxJSは難しい？</h2>
@@ -163,16 +160,17 @@ Rx.Observable.fromPromise(Promise.resolve('oi'))
           <ul>
             <li>Observable, Observer</li>
             <ul>
+                <li>データの発生、消費</li>
               <li>一番基本的な概念</li>
             </ul>
             <li>Subject</li>
             <ul>
-              <li>便利マン</li>
+              <li>データのマルチキャスト</li>
               <li>今回の主役</li>
             </ul>
             <li>Operators</li>
             <ul>
-              <li>知れば知る程RxJSが便利になるやつ</li>
+              <li>データの加工</li>
               <li>今回はmap/switchMapくらい</li>
             </ul>
             <li>Subscription, Schedulers</li>
@@ -190,13 +188,27 @@ Rx.Observable.fromPromise(Promise.resolve('oi'))
             <li>from, range, fromEventなど</li>
           </ul>
           <pre class="copytoclipboard">
-            <code class="language-javascript">              
-Rx.Observable.from([1,2,3,4])
-  .subscribe(console.log); // 1,2,3,4
+            <code class="language-javascript">
+Rx.Observable.from(['foo', 'bar', 'baz', 'qux'])
+  .subscribe(console.log); // 'foo', 'bar', 'baz', 'qux'
 Rx.Observable.range(1,4)
   .subscribe(console.log); // 1,2,3,4
 Rx.Observable.fromEvent(window, 'mousemove')
   .subscribe(console.log); // すごいことに
+            </code>
+          </pre>
+        </section>
+        <section>
+          <h2>Angularでは</h2>
+          <ul>
+            <li>HttpやRouterなどなど</li>
+          </ul>
+          <pre class="copytoclipboard">
+            <code class="language-typescript">
+// Observable&ltUser&gtが戻り値
+http.get&ltUser&gt('/api/user');
+// /users?id=10 クエリパラメータが変わるとデータが渡ってくる
+route.queryParams.subscribe(params.id => this.selectedId = params.id)
             </code>
           </pre>
         </section>
@@ -261,6 +273,72 @@ observable.subscribe(
   () => console.log('completed')
 );</code>
           </pre>
+        </section>
+        <section>
+          <h2>Observable百景</h2>
+          Angularの車窓から
+        </section>
+        <section>
+          <h2>AngularのHttpとComponent</h2>
+          <pre>
+              <code class="language-typescript">@Component({
+  template: `
+    &lth1&gtUser&lt/h1&gt
+    &ltp&gt{{ user.name }}&ltp&gt`
+})
+export class UserComponent {
+  user: User;
+  constructor(private http: HttpClient) {
+    http.get&ltUser&gt('/api/user')
+      .subscribe(user => this.user = user);
+  }
+}</code>
+            </pre>
+        </section>
+        <section>
+          <h2>Httpの4xx/5xxレスポンス</h2>
+          <pre>
+              <code class="language-typescript">// true:ログイン成功 false:失敗
+login(name: string, password: string): Observable&ltboolean&gt {
+  return http.post('/login', { name, password })
+    .mapTo(true)
+    .catch((res: HttpErrorResponse) => {
+      if (res.status === 401) {
+        return Observable.of(false);
+      } else {
+        return Observable.throw(res);
+      }
+    });
+}</code>
+            </pre>
+        </section>
+        <section>
+          <h2>サジェスト表示</h2>
+          <pre>
+              <code class="language-typescript" style="max-height: 50vh;">@Component({
+  template: `
+    &ltinput type="text" (keyup)="onChange(input.value)" #input /&gt
+    &ltp&gtさては{{ suggest }}だなオメー&lt/p&gt`
+})
+export class AppComponent {
+  word$ = new Subject&ltstring&gt();
+  suggest = ''
+
+  constructor(private http: HttpClient) {
+    this.word$
+      .debounceTime(500)
+      .distinctUntilChanged()
+      .switchMap(word => {
+        return this.http.get&ltstring&gt(`/search?word=${word}`);
+      })
+      .subscribe(suggest = this.suggest = suggest);
+  }
+
+  onChange(word: string) {
+    this.word$.next(word);
+  }
+}</code>
+            </pre>
         </section>
         <section>
           <h2>Observableの性質</h2>
@@ -362,7 +440,7 @@ setInterval(() => {
         $this.wrap('<div/>').removeClass('copytoclipboard');
         $wrapper = $this.parent();
         $wrapper.addClass('copytoclipboard-wrapper').css({position: 'relative'})
-        $button.css({position: 'absolute', top: 32, right: 2, height: 30, width: 60}).appendTo($wrapper).addClass('copytoclipboard btn btn-default');
+        $button.css({position: 'absolute', top: 32, right: 52, height: 30, width: 60}).appendTo($wrapper).addClass('copytoclipboard btn btn-default');
         /* */
         var copyCode = new Clipboard('button.copytoclipboard', {
           target: function (trigger) {
