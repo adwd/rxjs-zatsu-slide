@@ -28,6 +28,10 @@
       .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
         text-transform: none;
       }
+      .reveal pre {
+        width: 100%;
+        margin: 0;
+      }
       .button {
         width: 200px;
         height: 50px;
@@ -67,14 +71,15 @@
         </section>
         <section>
         <h2>雑?</h2>
+        この勉強会の後半で必要になる</br>RxJSの前提知識だけカバーします
+        </section>
+        <section>
+        <h2>もくじ</h2>
         <ul>
-          <li>この勉強会の後半で必要になるRxJSの前提知識だけカバーします</li>
-          <ul>
-            <li>RxJSってなに</li>
-            <li>Observable</li>
-            <li>Subject</li>
-            <li>BehaviorSubject</li>
-          </ul>
+          <li>RxJSってなに</li>
+          <li>Observable</li>
+          <li>Subject</li>
+          <li>BehaviorSubject</li>
         </ul>
         </section>
         <section>
@@ -357,7 +362,7 @@ setInterval(() => {
         $this.wrap('<div/>').removeClass('copytoclipboard');
         $wrapper = $this.parent();
         $wrapper.addClass('copytoclipboard-wrapper').css({position: 'relative'})
-        $button.css({position: 'absolute', top: 32, right: 50, height: 30, width: 60}).appendTo($wrapper).addClass('copytoclipboard btn btn-default');
+        $button.css({position: 'absolute', top: 32, right: 2, height: 30, width: 60}).appendTo($wrapper).addClass('copytoclipboard btn btn-default');
         /* */
         var copyCode = new Clipboard('button.copytoclipboard', {
           target: function (trigger) {
