@@ -239,8 +239,9 @@ var observer = {
         </section>
         <section>
           <h2>Observable.create</h2>
-          <ul>
+          <ul style="font-size: 80%;">
             <li>一番プリミティブなObservable生成メソッド</li>
+            <li>constructorのエイリアス</li>
             <li>引数にObserverを取り、nextなどで操作</li>
           </ul>
           <p style="font-size: 60%">XMLHttpRequestと組み合わせてオレオレRxJSHttpクライアントが作れそう？</p>
@@ -373,8 +374,33 @@ export class AppComponent {
         </section>
         <section>
           <h2>Observableの性質</h2>
-          <ul>
+          <ul style="font-size: 80%;">
             <li>Observableは一つのObserverしか受け付けない</li>
+            <li>Observable.createからもそんな感じがする</li>
+            <ul>
+              <li>subscribeしたら中の処理が実行されるだけ</li>
+            </ul>
+          </ul>
+          <pre class="copytoclipboard">
+            <code class="language-javascript">// 再掲
+var observable = Rx.Observable.create((observer) => {
+  observer.next(1);
+  observer.next(2);
+  setTimeout(() => {
+    observer.next(3);
+    observer.complete();
+  }, 1000);
+});
+observable.subscribe(
+  (x) => console.log('value: ' + x),
+  (e) => console.log(e),
+  () => console.log('completed')
+);</code>
+          </pre>
+        </section>
+        <section>
+          <h2>Observableの性質</h2>
+          <ul>
             <li>Observableの値を色んな所で使いたい場合困る</li>
           </ul>
           <pre>
@@ -404,9 +430,8 @@ public user$ = new Subject();
 getUser() {
   this.http.get&ltUser&gt('/api/user')
     .subscribe(user => user$.next(user));
-    // 一度のAPIコールで色んな所にnextされる
-}
-            </code>
+    // user$をsubscribeしている全員に値が配信される
+}</code>
           </pre>
         </section>
         <section>
@@ -442,6 +467,9 @@ setInterval(() => {
             <li>Subjectは値をマルチキャストできる</li>
             <li>Subjectの派生クラスにBehaviorSubjectがあり、subscribeするとその時点での値を流してくれる</li>
           </ul>
+        </section>
+        <section data-background-image="image/rxjs-logo.png" data-background-size="auto 80%">
+          <h1>完</h1>
         </section>
       </div>
     </div>
