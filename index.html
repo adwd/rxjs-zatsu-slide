@@ -284,7 +284,7 @@ export class UserComponent {
         </section>
         <section>
           <h2>async パイプ版</h2>
-          <ul>
+          <ul style="font-size: 80%">
             <li>asyncパイプを使うとsubscribe/unsubscribeを<br/>よしなにやってくれる</li>
             <li>ngIfやngForとの併用が便利</li>
           </ul>
@@ -325,6 +325,9 @@ login(name: string, password: string): Observable&ltboolean&gt {
         </section>
         <section>
           <h2>Router</h2>
+          <ul>
+            <li>パス、クエリパラメータ等の変更はObservableになっている</li>
+          </ul>
           <pre>
             <code class="language-typescript">
 constructor(
@@ -346,7 +349,7 @@ ngOnInit() {
         <section>
           <h2>サジェスト表示</h2>
           <pre>
-              <code class="language-typescript" style="max-height: 50vh;">@Component({
+              <code class="language-typescript" style="max-height: 50vh; font-size: 80%;">@Component({
   template: `
     &ltinput type="text" #input
            (keyup)="onChange(input.value)" /&gt
@@ -433,6 +436,9 @@ getUser() {
     // user$をsubscribeしている全員に値が配信される
 }</code>
           </pre>
+        </section>
+        <section>
+          <img src="image/subject.png"></img>
         </section>
         <section>
           <h2>BehaviorSubject</h2>
