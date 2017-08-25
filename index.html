@@ -82,12 +82,13 @@
           <h2>RxJSってなに</h2>
           非同期やイベントのコールバックをmap/filter/reduceなどのコレクションのAPIぽく扱えるライブラリ
           <pre class="copytoclipboard">
-            <code class="language-javascript">
-Rx.Observable.fromEvent(window, 'click')
+            <code class="language-javascript">Rx.Observable.fromEvent(window, 'click')
+  .distinctUntilChanged(
+    (prev, next) => prev.pageX === next.pageX
+  )
   .filter(ev => ev.pageX < 400 && ev.pageY < 400)
   .map(ev => 'mouse click, X:' + ev.pageX + ', Y:' + ev.pageY)
-  .subscribe(msg => console.log(msg));
-            </code>
+  .subscribe(msg => console.log(msg));</code>
           </pre>
           <p style="font-size: 70%">このスライドに出てくるコードをCopyボタンでコピーしてコンソールに貼って動かしてみてください</p>
         </section>
@@ -126,7 +127,7 @@ Rx.Observable.fromPromise(Promise.resolve('oi'))
             <ul><li>自分で書いたらだるすぎる・バグりまくるような処理もイケる</li></ul>
           </ul>
 
-          <p>うれしくなくてもAngularが<br/>使ってるので覚えたざるを得ない😂 </p>
+          <p>うれしくなくてもAngularが<br/>使ってるので覚えざるを得ない😂 </p>
         </section>
         <section>
           <h2>RxJSは難しい？</h2>
@@ -299,6 +300,7 @@ export class UserComponent {
     &lt/ng-template&gt`
 })
 export class UserComponent {
+  // Observable&ltT&gtな変数に$をつける文化っぽい
   user$: Observable&ltUser&gt;
   constructor(private http: HttpClient) {
     this.user$ = http.get&ltUser&gt('/api/user');
@@ -353,20 +355,19 @@ ngOnInit() {
   template: `
     &ltinput type="text" #input
            (keyup)="onChange(input.value)" /&gt
-    &ltp&gtさては{{ suggest }}だなオメー&lt/p&gt`
+    &ltp&gtさては{{ suggest$ | async }}だなオメー&lt/p&gt`
 })
 export class AppComponent {
   word$ = new Subject&ltstring&gt();
-  suggest = ''
+  suggest$: Observable&ltstring&gt
 
   constructor(private http: HttpClient) {
-    this.word$
+    this.suggest$ = this.word$
       .debounceTime(500)
       .distinctUntilChanged()
       .switchMap(word => {
         return this.http.get&ltstring&gt(`/search?word=${word}`);
-      })
-      .subscribe(suggest = this.suggest = suggest);
+      });
   }
 
   onChange(word: string) {
@@ -447,7 +448,8 @@ getUser() {
             <li>Subject＋現在値</li>
             <li>subscribeした瞬間に現在値を返してくれる</li>
           </ul>
-          <p style="font-size: 50%">下記コードをコンソール上に貼り付けて実行した後、どちらかのボタンを押してsubscribeする。BehaviorSubjectはその時点の値が流れてくるが、Subjectは次のsetInterval実行まで値が来ない</p>
+          <p style="font-size: 40%">下記コードをコンソール上に貼り付けて実行した後、どちらかのボタンを押してsubscribeする。<br/>
+            BehaviorSubjectはその時点の値が流れてくるが、Subjectは次のsetInterval実行まで(最大2秒間)値が来ない</p>
           <button class="button" onClick="behaviorSubject.subscribe(console.log)">subscribe BehaviorSubject</button>
           <button class="button" onClick="subject.subscribe(console.log)">subscribe Subject</button>
           <pre class="copytoclipboard">
